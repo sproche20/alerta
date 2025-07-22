@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+    <title>Validación de Ciudadanos | Alerta Vecinal</title>
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="header-actions mb-4">
+            <h2>
+                <i class="bi bi-people-fill me-2"></i>Ciudadanos Pendientes de Aprobación
+            </h2>
+            <div class="badge bg-primary fs-6">
+                <i class="bi bi-hourglass-split me-1"></i>
+                <span th:text="${listaPendientes.size()}"></span> pendientes
+            </div>
+        </div>
+
+        <div class="card-container">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th><i class="bi bi-person-badge me-1"></i>Nombre</th>
+                            <th><i class="bi bi-credit-card me-1"></i>Cédula</th>
+                            <th><i class="bi bi-envelope me-1"></i>Correo</th>
+                            <th><i class="bi bi-geo-alt me-1"></i>Barrio</th>
+                            <th class="text-center"><i class="bi bi-check-circle me-1"></i>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="usuario : ${listaPendientes}">
+                            <td th:text="${usuario.nombre}"></td>
+                            <td th:text="${usuario.cedula}"></td>
+                            <td>
+                                <a th:href="'mailto:' + ${usuario.correo}" class="text-primary">
+                                    <i class="bi bi-envelope-at"></i>
+                                    <span th:text="${usuario.correo}"></span>
+                                </a>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary" th:text="${usuario.barrioModel.nombre}"></span>
+                            </td>
+                            <td class="text-center table-actions">
+                                <a th:href="@{/habilitarUsuario/{id}(id=${usuario.id})}" 
+                                   class="btn btn-success btn-sm me-2"
+                                   data-bs-toggle="tooltip" title="Aprobar ciudadano">
+                                    <i class="bi bi-check-lg"></i> Aprobar
+                                </a>
+                                <a th:href="@{/rechazarUsuario/{id}(id=${usuario.id})}"
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('¿Está seguro de rechazar este ciudadano?')"
+                                   data-bs-toggle="tooltip" title="Rechazar solicitud">
+                                    <i class="bi bi-x-lg"></i> Rechazar
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${listaPendientes.empty}">
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <i class="bi bi-check-circle-fill text-success fs-4 d-block mb-2"></i>
+                                No hay ciudadanos pendientes por aprobar
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a th:href="@{/alerta/incidenteForm}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Volver
+            </a>
+            <div class="text-muted small">
+                Mostrando <span th:text="${listaPendientes.size()}"></span> registros
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+</body>
+</html>

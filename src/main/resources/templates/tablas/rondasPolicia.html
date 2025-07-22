@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+    <title>Mis Rondas Policiales | Alerta Vecinal</title>
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="header-actions mb-4">
+            <h2>
+                <i class="bi bi-shield-check me-2"></i>Mis Rondas Registradas
+            </h2>
+            <a th:href="@{/alerta/formRonda}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Nueva Ronda
+            </a>
+        </div>
+
+        <!-- Mensaje de éxito -->
+        <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${mensaje}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="card-container">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th width="5%">#</th>
+                            <th width="20%"><i class="bi bi-calendar-event me-1"></i>Fecha y Hora</th>
+                            <th width="20%"><i class="bi bi-geo-alt me-1"></i>Barrio</th>
+                            <th width="40%"><i class="bi bi-journal-text me-1"></i>Observaciones</th>
+                            <th width="15%" class="text-center"><i class="bi bi-activity me-1"></i>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="ronda, iterStat : ${listaRondas}">
+                            <td th:text="${iterStat.count}"></td>
+                            <td th:text="${#temporals.format(ronda.fechaHora, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td>
+                                <span class="badge bg-primary" th:text="${ronda.barrioModel.nombre}"></span>
+                            </td>
+                            <td>
+                                <span th:if="${ronda.observaciones}" th:text="${ronda.observaciones}"></span>
+                                <span th:unless="${ronda.observaciones}" class="text-muted">Sin observaciones</span>
+                            </td>
+                            <td class="text-center">
+                                <a th:href="@{'/alerta/eliminarRonda/' + ${ronda.id}}" 
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('¿Estás seguro de eliminar esta ronda?');"
+                                   data-bs-toggle="tooltip" title="Eliminar ronda">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${listaRondas.empty}">
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <i class="bi bi-info-circle-fill fs-4 d-block mb-2"></i>
+                                No hay rondas registradas
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+</body>
+</html>

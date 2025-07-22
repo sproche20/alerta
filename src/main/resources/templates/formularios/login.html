@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+    <title>Iniciar Sesión | Alerta Vecinal</title>
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        }
+        
+        .login-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .login-header {
+            background-color: #dc3545;
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .login-body {
+            padding: 2rem;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .form-control:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+        }
+        
+        .btn-login {
+            background-color: #dc3545;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-login:hover {
+            background-color: #bb2d3b;
+        }
+        
+        .login-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #6c757d;
+        }
+        
+        .login-footer a {
+            color: #dc3545;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Ocultar toggle sidebar */
+        .toggle-btn {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div layout:fragment="content" class="login-container">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="login-card card">
+                        <div class="login-header">
+                            <h2 class="mb-0">🚨 Alerta Vecinal</h2>
+                            <p class="mb-0">Sistema de alertas comunitarias</p>
+                        </div>
+                        
+                        <div class="login-body card-body">
+                            <h3 class="text-center mb-4">Iniciar Sesión</h3>
+                            
+                            <form th:action="@{/login}" method="post">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Correo electrónico</label>
+                                    <input type="email" id="username" name="username" class="form-control" 
+                                           placeholder="ejemplo@dominio.com" required autofocus>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="password" class="form-label">Contraseña</label>
+                                    <input type="password" id="password" name="password" class="form-control" 
+                                           placeholder="Ingresa tu contraseña" required>
+                                </div>
+                                
+                                <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    Correo o contraseña incorrectos
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                                
+                                <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show">
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                    Sesión cerrada correctamente
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                                
+                                <div class="d-grid gap-2 mb-3">
+                                    <button type="submit" class="btn btn-login btn-lg text-white">
+                                        <i class="bi bi-box-arrow-in-right me-2"></i> Ingresar
+                                    </button>
+                                </div>                              
+                                
+                            </form>
+                        </div>
+                        
+                        <div class="login-footer card-footer bg-transparent">
+                            ¿No tienes cuenta? <a th:href="@{/registro}">Regístrate aquí</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script para ocultar completamente el sidebar -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ocultar sidebar completamente
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) sidebar.style.display = 'none';
+            
+            // Asegurarse que el contenido principal ocupe todo el espacio
+            const mainContent = document.getElementById('mainContent');
+            if (mainContent) mainContent.style.marginLeft = '0';
+        });
+    </script>
+</body>
+</html>
+

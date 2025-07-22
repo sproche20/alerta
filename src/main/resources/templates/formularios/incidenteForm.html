@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title>Notificar Incidente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ <style>
+    .main-content {
+        margin-left: 250px;
+        padding: 15px;
+        transition: all 0.3s;
+        width: calc(100% - 250px);
+    }
+
+    @media (max-width: 992px) {
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+            padding: 10px;
+        }
+    }
+
+    .incident-card {
+        transition: all 0.3s;
+        cursor: pointer;
+        border-radius: 12px;
+        height: auto;
+        padding: 15px 10px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        margin-left: 3px;
+    }
+
+    .incident-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    .selected {
+        border: 2px solid #dc3545;
+        background-color: #fff5f5;
+    }
+
+    .incident-icon {
+        font-size: 2rem;
+        margin-bottom: 6px;
+        color: #dc3545;
+    }
+
+    .panic-btn-container {
+        position: relative;
+        margin: 20px 0;
+        padding: 15px 0;
+    }
+
+    .panic-btn-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        height: 1px;
+        background: linear-gradient(to right, transparent, #ddd, transparent);
+    }
+
+    .panic-btn {
+        font-size: 1.5rem;
+        border-radius: 10px;
+        padding: 12px 20px;
+        box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        transition: all 0.3s;
+    }
+
+    .panic-btn:hover {
+        transform: scale(1.03);
+        box-shadow: 0 6px 15px rgba(220, 53, 69, 0.5);
+    }
+
+    .other-input {
+        border-radius: 8px;
+        border: 2px solid #ddd;
+        font-size: 0.9rem;
+        padding: 8px 10px;
+        transition: all 0.3s;
+    }
+
+    .other-input:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+
+    .alert-btn {
+        border-radius: 8px;
+        padding: 8px 18px;
+        font-size: 0.95rem;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+    .alert-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Ajustes especiales para pantallas pequeñas */
+    @media (max-width: 576px) {
+        .panic-btn {
+            font-size: 1.2rem;
+            padding: 10px 15px;
+        }
+
+        .incident-icon {
+            font-size: 1.5rem;
+        }
+
+        .incident-card {
+            padding: 10px 8px;
+        }
+
+        .alert-btn {
+            padding: 6px 14px;
+            font-size: 0.85rem;
+        }
+
+        .other-input {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+
+</head>
+<body>
+<div layout:fragment="content" class="main-content">
+    <div class="container-fluid py-4">
+        <!-- BOTÓN DE PÁNICO -->
+        <div class="panic-btn-container text-center">
+            <form th:action="@{/alerta/guardarIncidente}" method="post">
+                <input type="hidden" name="tipo" value="EMERGENCIA 911" />
+                <input type="hidden" name="descripcion" value="Alerta generada desde el botón de pánico" />
+                <input type="hidden" name="latitud" id="latitudPanico" />
+                <input type="hidden" name="longitud" id="longitudPanico" />
+                <button type="submit" class="btn btn-danger panic-btn">
+                    <i class="fas fa-exclamation-triangle me-2"></i> BOTÓN DE PÁNICO
+                </button>
+            </form>
+        </div>
+        
+        <h2 class="mb-4 text-center fw-bold">Notificar Incidente</h2>
+
+        <!-- FORMULARIO PRINCIPAL -->
+        <form th:action="@{/alerta/guardarIncidente}" th:object="${nuevo}" method="post" class="card p-4 shadow-sm mb-3" style="border-radius: 20px;">
+            <!-- Campos ocultos -->
+            <input type="hidden" th:field="*{tipo}" id="tipoSeleccionado" />
+            <input type="hidden" th:field="*{latitud}" id="latitud" />
+            <input type="hidden" th:field="*{longitud}" id="longitud" />
+
+            <!-- Selección por tarjetas -->
+            <div class="row row-cols-2 row-cols-md-3 g-4 mb-4">
+                <!-- Robo -->
+                <div class="col">
+                    <div class="card incident-card text-center p-3" data-tipo="Robo" onclick="seleccionarTipo(this)">
+                        <div class="incident-icon">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Robo - Asalto </h5>
+                    </div>
+                </div>
+                
+                <!-- Disparos -->
+                <div class="col">
+                    <div class="card incident-card text-center p-3" data-tipo="Disparos" onclick="seleccionarTipo(this)">
+                        <div class="incident-icon">
+                            <i class="fas fa-gun"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Disparos</h5>
+                    </div>
+                </div>
+                
+                <!-- Riña callejera -->
+                <div class="col">
+                    <div class="card incident-card text-center p-3" data-tipo="Riña callejera" onclick="seleccionarTipo(this)">
+                        <div class="incident-icon">
+                            <i class="fas fa-people-arrows"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Riña callejera</h5>
+                    </div>
+                </div>
+                
+                <!-- Sospechoso rondando -->
+                <div class="col">
+                    <div class="card incident-card text-center p-3" data-tipo="Sospechoso rondando" onclick="seleccionarTipo(this)">
+                        <div class="incident-icon">
+                            <i class="fas fa-user-secret"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Sospechoso rondando</h5>
+                    </div>
+                </div>
+                
+                <!-- Incendio -->
+                <div class="col">
+                    <div class="card incident-card text-center p-3" data-tipo="Incendio" onclick="seleccionarTipo(this)">
+                        <div class="incident-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Incendio</h5>
+                    </div>
+                </div>
+                
+                <!-- Accidente de tránsito -->
+                <div class="col">
+                    <div class="card incident-card text-center p-3" data-tipo="Accidente de tránsito" onclick="seleccionarTipo(this)">
+                        <div class="incident-icon">
+                            <i class="fas fa-car-crash"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Accidente de tránsito</h5>
+                    </div>
+                </div>
+                
+                <!-- Emergencia médica -->
+                <div class="col">
+                    <div class="card incident-card text-center p-3" data-tipo="Emergencia médica" onclick="seleccionarTipo(this)">
+                        <div class="incident-icon">
+                            <i class="fas fa-ambulance"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Emergencia médica</h5>
+                    </div>
+                </div>
+                
+                <!-- Opción "Otro" -->
+                <div class="col">
+                    <div class="card text-center p-3" data-tipo="Otro" onclick="seleccionarTipo(this)">
+                        <div class="incident-icon">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                        <h5 class="card-title fw-bold mb-3">Otro</h5>                   
+                    </div>
+                </div>
+            </div>
+
+            <!-- Descripción -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Descripción (opcional)</label>
+                <textarea th:field="*{descripcion}" class="form-control" rows="3" style="border-radius: 10px;" placeholder="Describe brevemente el incidente..."></textarea>
+                <div class="text-danger" th:errors="*{descripcion}"></div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <button type="submit" class="btn btn-danger btn-lg alert-btn">
+                    <i class="fas fa-bell me-2"></i> Enviar Alerta
+                </button>
+                <a th:href="@{/alerta/incidenteTable}" class="btn btn-secondary btn-lg ms-2 alert-btn">
+                    <i class="fas fa-list me-2"></i> Ver Incidentes
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- JS para ubicación y selección -->
+    <script>
+        navigator.geolocation.getCurrentPosition(function(position) {
+            // Formulario principal
+            document.getElementById("latitud").value = position.coords.latitude;
+            document.getElementById("longitud").value = position.coords.longitude;
+
+            // Botón de pánico
+            const latP = document.getElementById("latitudPanico");
+            const lonP = document.getElementById("longitudPanico");
+            if (latP && lonP) {
+                latP.value = position.coords.latitude;
+                lonP.value = position.coords.longitude;
+            }
+        });
+
+        function seleccionarTipo(card) {
+            document.querySelectorAll('.incident-card').forEach(function(c) {
+                c.classList.remove('selected');
+            });
+            card.classList.add('selected');
+            document.getElementById('tipoSeleccionado').value = card.getAttribute('data-tipo');
+            
+            // Limpiar campo "Otro" si se selecciona una tarjeta
+            if (document.querySelector('.other-input')) {
+                document.querySelector('.other-input').value = '';
+            }
+        }
+
+        function otroEspecificado(input) {
+            document.querySelectorAll('.incident-card').forEach(function(c) {
+                c.classList.remove('selected');
+            });
+            document.getElementById('tipoSeleccionado').value = input.value;
+        }
+    </script>
+</div>
+</body>
+</html>

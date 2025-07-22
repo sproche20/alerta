@@ -1,0 +1,29 @@
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // Verifica compatibilidad
+        if (!("Notification" in window)) {
+            console.log("Este navegador no soporta notificaciones.");
+            return;
+        }
+
+        // Pide permiso si no se ha otorgado
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+
+        // Simulación de una notificación con Thymeleaf
+        /* Solo enviamos la primera para pruebas */
+        let notificaciones = /*[[${notificacionesRecientes}]]*/ [];
+        if (notificaciones.length > 0) {
+            let mensaje = notificaciones[0].mensaje || "Tienes una nueva notificación";
+
+            // Mostrar notificación si se dio permiso
+            if (Notification.permission === "granted") {
+                new Notification("🔔 Alerta Vecinal", {
+                    body: mensaje,
+                    icon: "/img/icono.png" // Opcional: ícono si tienes uno
+                });
+            }
+        }
+    });
+</script>

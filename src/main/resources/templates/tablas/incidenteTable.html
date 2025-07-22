@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/layout}">
+
+
+<head>
+    <title>Incidentes | Alerta Vecinal</title>
+    <style>
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+        .responsive-table {
+            min-width: 600px; /* Ancho mínimo para dispositivos pequeños */
+            width: 100%;
+        }
+        .city-badge {
+            font-size: 0.85em;
+            padding: 0.35em 0.65em;
+            background-color: #0d6efd;
+            color: white;
+        }
+        .table-actions {
+            white-space: nowrap;
+        }
+        .table-actions .btn {
+            margin-right: 5px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        @media (max-width: 768px) {
+            .header-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-actions .btn {
+                margin-top: 10px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="header-actions">
+            <h2>
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>Incidentes Registrados
+            </h2>
+            <a th:href="@{/alerta/incidenteForm}" class="btn btn-success">
+                <i class="bi bi-plus-circle me-1"></i> Nuevo Incidente
+            </a>
+        </div>
+
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                            <th>Dirección</th>
+                            <th>Fecha y Hora</th>
+                            <th>Estado</th>
+                            <th>Usuario</th>
+                            <th>Barrio</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="inc : ${listaIncidente}">
+                            <td th:text="${inc.tipo}"></td>
+                            <td th:text="${inc.descripcion}"></td>
+                            <td th:text="${inc.direccion}"></td>
+                            <td th:text="${#temporals.format(inc.fechaHora, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td>
+                                <span th:classappend="${inc.estado == 'Resuelto'} ? 'badge bg-success' : 
+                                                     (${inc.estado == 'En progreso'} ? 'badge bg-warning text-dark' : 'badge bg-danger')"
+                                      class="status-badge" th:text="${inc.estado}"></span>
+                            </td>
+                            <td th:text="${inc.usuarioModel?.nombre}"></td>
+                            <td th:text="${inc.barrioModel?.nombre}"></td>
+                            <td class="text-center table-actions">
+                                <a th:href="@{'/alerta/editarIncidente/' + ${inc.id}}" 
+                                   class="btn btn-warning btn-sm"
+                                   data-bs-toggle="tooltip" title="Editar">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a th:href="@{'/alerta/eliminarIncidente/' + ${inc.id}}" 
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('¿Estás seguro de eliminar este incidente?')"
+                                   data-bs-toggle="tooltip" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

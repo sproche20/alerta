@@ -1,0 +1,234 @@
+@charset "UTF-8";
+/******************************
+  ESTRUCTURA PRINCIPAL
+*******************************/
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    width: calc(100% - 250px);
+}
+
+.container-fluid.py-4 {
+    padding-left: 15px;
+    padding-right: 15px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/******************************
+  TARJETAS DE INCIDENTES
+*******************************/
+.incident-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border-radius: 12px;
+    height: auto;
+    padding: 20px 15px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    border: 1px solid #eee;
+    background-color: #fff;
+}
+
+.incident-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.incident-card.selected {
+    border: 2px solid #dc3545;
+    background-color: #fff5f5;
+}
+
+.incident-icon {
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+    color: #dc3545;
+}
+
+.card-title {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0;
+}
+
+/******************************
+  BOTÓN DE PÁNICO
+*******************************/
+.panic-btn-container {
+    position: relative;
+    margin: 30px 0;
+    padding: 20px 0;
+}
+
+.panic-btn-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #ddd, transparent);
+}
+
+.panic-btn {
+    font-size: 1.5rem;
+    border-radius: 10px;
+    padding: 15px 25px;
+    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+    transition: all 0.3s ease;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.panic-btn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 15px rgba(220, 53, 69, 0.5);
+}
+
+/******************************
+  FORMULARIO PRINCIPAL
+*******************************/
+.form-container {
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    background-color: #fff;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+textarea.form-control {
+    min-height: 100px;
+    border-radius: 10px;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.3s ease;
+}
+
+textarea.form-control:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/******************************
+  BOTONES DE ACCIÓN
+*******************************/
+.alert-btn {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.alert-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+/******************************
+  DISEÑO RESPONSIVE
+*******************************/
+@media (max-width: 992px) {
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 15px;
+    }
+    
+    .panic-btn {
+        font-size: 1.3rem;
+        padding: 12px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .incident-card {
+        padding: 15px 10px;
+    }
+    
+    .incident-icon {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .panic-btn {
+        font-size: 1.2rem;
+        padding: 10px 15px;
+    }
+    
+    .incident-icon {
+        font-size: 1.5rem;
+    }
+    
+    .incident-card {
+        padding: 12px 8px;
+    }
+    
+    .alert-btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .form-container {
+        padding: 1.5rem;
+    }
+    
+    .main-content {
+        padding: 10px;
+    }
+}
+
+/******************************
+  UTILIDADES
+*******************************/
+.text-center {
+    text-align: center;
+}
+
+.fw-bold {
+    font-weight: 700;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.d-grid {
+    display: grid;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.d-md-flex {
+    display: flex;
+}
+
+.justify-content-md-start {
+    justify-content: flex-start;
+}

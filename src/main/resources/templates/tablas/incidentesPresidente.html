@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+  <title>Lista de Incidentes</title>
+</head>
+
+<body>
+  <div layout:fragment="content">
+    <div class="container mt-4">
+      <h2>Lista de Incidentes</h2>
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>Tipo</th>
+            <th>Descripción</th>
+            <th>Dirección</th>
+            <th>Fecha y Hora</th>
+            <th>Estado</th>
+            <th>Usuario</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="inc : ${listaIncidente}">
+            <td th:text="${inc.tipo}"></td>
+            <td th:text="${inc.descripcion}"></td>
+            <td th:text="${inc.direccion}"></td>
+            <td th:text="${#temporals.format(inc.fechaHora, 'dd/MM/yyyy HH:mm')}"></td>
+            <td>
+              <span th:classappend="${inc.estado == 'RESUELTO'} ? 'badge bg-success' : 
+                                     (${inc.estado == 'EN PROGRESO'} ? 'badge bg-warning text-dark' : 'badge bg-danger')"
+                    class="status-badge" th:text="${inc.estado}"></span>
+            </td>
+            <td th:text="${inc.usuarioModel?.nombre}"></td>
+            <td>
+              <a th:href="@{'/alerta/estadoIncidente/' + ${inc.id}}"
+                 class="btn btn-primary btn-sm"
+                 data-bs-toggle="tooltip" title="Cambiar Estado">
+                 <i class="bi bi-arrow-repeat"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
+
+
+

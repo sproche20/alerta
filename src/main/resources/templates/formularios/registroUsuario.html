@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<div layout:fragment="content">
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">🧑 Registro de Usuario</h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/registro}" method="post" th:object="${nuevoUsuario}">
+                      <div th:if="${error}" class="alert alert-danger">
+   					 	<span th:text="${error}"></span>
+					</div>
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre completo</label>
+                            <input type="text" th:field="*{nombre}" class="form-control" id="nombre" placeholder="Ej. Juan Pérez" required>
+                            <div class="text-danger" th:errors="*{nombre}"></div>
+                        </div>
+                        <div class="mb-3">
+						    <label for="cedula" class="form-label">Cédula</label>
+						    <input type="text" th:field="*{cedula}" class="form-control" id="cedula" placeholder="Ej. 0102030405" required>
+						    <div class="text-danger" th:errors="*{cedula}"></div>
+						</div>
+                        <div class="mb-3">
+                            <label for="correo" class="form-label">Correo electrónico</label>
+                            <input type="email" th:field="*{correo}" class="form-control" id="correo" placeholder="ejemplo@correo.com" required>
+                            <div class="text-danger" th:errors="*{correo}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" th:field="*{password}" class="form-control" id="password" required>
+                            <div class="text-danger" th:errors="*{password}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="rol" class="form-label">Rol</label>
+                            <select th:field="*{rol}" class="form-select" id="rol" required>
+                                <option value="" disabled selected>Seleccione un rol</option>
+                                <option value="CIUDADANO">CIUDADANO</option>
+                                <option value="PRESIDENTE">PRESIDENTE</option>
+                                <option value="POLICIA">POLICIA</option>
+                            </select>
+                            <div class="text-danger" th:errors="*{rol}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="barrioModel" class="form-label">Barrio</label>
+                            <select th:field="*{barrioModel}" class="form-select" id="barrioModel" required>
+                                <option value="" disabled selected>Seleccione un barrio</option>
+                                <option th:each="b : ${listaBarrios}" th:value="${b.id}" th:text="${b.nombre}"></option>
+                            </select>
+                            <div class="text-danger" th:errors="*{barrioModel}"></div>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                            <button type="submit" class="btn btn-success btn-lg">Registrar</button>
+                            <a th:href="@{/login}" class="btn btn-secondary btn-lg ms-2">Volver al Login</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

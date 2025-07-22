@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<div layout:fragment="content">
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">🏘️ Registrar Barrio</h2>
+
+                    <form th:action="@{/alerta/guardarBarrio}" method="post" th:object="${nuevo}">
+
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre del Barrio</label>
+                            <input type="text" th:field="*{nombre}" class="form-control" id="nombre" placeholder="Ej. San Carlos" required>
+                            <div class="text-danger" th:errors="*{nombre}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="ciudad" class="form-label">Ciudad</label>
+                            <input type="text" th:field="*{ciudad}" class="form-control" id="ciudad" placeholder="Ej. Quito" required>
+                            <div class="text-danger" th:errors="*{ciudad}"></div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                            <button type="submit" class="btn btn-success btn-lg">Guardar Barrio</button>
+                            <a th:href="@{/alerta/barrioTable}" class="btn btn-secondary btn-lg ms-2">Ver Barrios</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</html>
+

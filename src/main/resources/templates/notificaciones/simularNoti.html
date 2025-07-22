@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Simulación de Notificación</title>
+</head>
+<body>
+<h2>🔔 Simulación de notificación</h2>
+<p>Abre esta página y mira si aparece una notificación del navegador.</p>
+
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        if (!("Notification" in window)) {
+            alert("Este navegador no soporta notificaciones.");
+            return;
+        }
+
+        Notification.requestPermission().then(function (permission) {
+            if (permission === "granted") {
+                new Notification("🔔 Alerta Vecinal", {
+                    body: [[${mensajeNoti}]],
+                    icon: "/img/icono.png"
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>
