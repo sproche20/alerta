@@ -1,18 +1,23 @@
-# Imagen base con Maven y Java
-FROM maven:3.8.6-openjdk-17
+# Usa una imagen oficial de Maven con JDK 17
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
-# Directorio de trabajo dentro del contenedor
+# Copia el código fuente al contenedor
+COPY . /app
+
+# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copiar pom.xml y código fuente
-COPY pom.xml .
-COPY src ./src
-
-# Construir el proyecto (sin tests para acelerar)
+# Construye el JAR
 RUN mvn clean package -DskipTests
 
-# Exponer el puerto que usará la app
+# Segunda fase: usar JDK más ligero para correr el JAR
+FROM eclipse-temurin:17-jdk
+
+# Copia el JAR generado
+COPY --from=build /app/target/*.jar app.jar
+
+# Puerto expuesto
 EXPOSE 8080
 
 # Comando para ejecutar la app
-CMD ["java", "-jar", "target/alerta-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
