@@ -93,7 +93,7 @@
 </dependencies>
 
 
-	<build>
+<build>
     <plugins>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -123,10 +123,11 @@
         <plugin>
 		    <groupId>org.apache.maven.plugins</groupId>
 		    <artifactId>maven-resources-plugin</artifactId>
+		    <version>3.3.1</version>
 		    <configuration>
 		        <encoding>UTF-8</encoding>
 		    </configuration>
-</plugin>
+		</plugin>
     </plugins>
 </build>
 
