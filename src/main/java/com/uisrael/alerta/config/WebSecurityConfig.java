@@ -55,7 +55,15 @@ public class WebSecurityConfig {
 	        http
 	            .csrf(csrf -> csrf.disable())
 	            .authorizeHttpRequests(auth -> auth
-	                .requestMatchers("/registro", "/registrar", "/css/**", "/js/**").permitAll()
+	            		.requestMatchers(
+	            			    "/registro", 
+	            			    "/registrar", 
+	            			    "/css/**", 
+	            			    "/js/**", 
+	            			    "/img/**",                     // ✅ para íconos del manifest
+	            			    "/manifest.json",             // ✅ manifest visible para PWA
+	            			    "/service-worker.js"          // ✅ necesario si tienes service worker
+	            			).permitAll()
 	                // ADMIN
 	                .requestMatchers(
 	                	    "/alerta/barrioForm", 

@@ -38,30 +38,39 @@ public class UsuarioController {
 	        return "formularios/registroUsuario";
 	    }
 
-	    @PostMapping("/registro")
-	    public String procesarRegistro(@ModelAttribute("nuevoUsuario") UsuarioModel usuario, Model model) {
-	        // Validar si ya hay un presidente en ese barrio
-	    	if (usuario.getRol().equals("PRESIDENTE")) {
-	    		boolean yaExiste=userSer.existePresidenteEnBarrio(usuario.getBarrioModel().getId());
-	    		if (yaExiste) {
-	    			model.addAttribute("error", "Ya existe un presidente registrado para ese barrio.");
-	                model.addAttribute("listaBarrios", barrioSer.listar());
-	                return "formularios/registroUsuario";
-				}
-	    		
-			}
-	    	  // ✅ Nuevas validaciones para roles
-	        if (usuario.getRol().equals("POLICIA") || usuario.getRol().equals("CIUDADANO")) {
-	            usuario.setEnabled(false); // Requiere validación manual
-	        } else {
-	            usuario.setEnabled(true); // ADMIN o PRESIDENTE por defecto habilitados
-	        }
-	        // Encriptar contraseña y guardar
-	    	usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-	        userSer.insertar(usuario);
-	        model.addAttribute("mensaje", "Registro exitoso. Espera aprobación si eres policía.");
-	        return "redirect:/login";
-	    }
+	  @PostMapping("/registro")
+	  public String procesarRegistro(@ModelAttribute("nuevoUsuario") UsuarioModel usuario,
+	                                 Model model,
+	                                 RedirectAttributes redirectAttrs) {
+	      // Validar si ya hay un presidente en ese barrio
+	      if (usuario.getRol().equals("PRESIDENTE")) {
+	          boolean yaExiste = userSer.existePresidenteEnBarrio(usuario.getBarrioModel().getId());
+	          if (yaExiste) {
+	              model.addAttribute("error", "Ya existe un presidente registrado para ese barrio.");
+	              model.addAttribute("listaBarrios", barrioSer.listar());
+	              return "formularios/registroUsuario";
+	          }
+	      }
+
+	      if (usuario.getRol().equals("POLICIA") || usuario.getRol().equals("CIUDADANO")) {
+	          usuario.setEnabled(false);
+	      } else {
+	          usuario.setEnabled(true);
+	      }
+
+	      usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+	      userSer.insertar(usuario);
+
+	      redirectAttrs.addFlashAttribute("mensaje",
+	              usuario.getRol().equals("POLICIA") ?
+	              "Registro exitoso. Espera aprobación del administrador." :
+	              usuario.getRol().equals("CIUDADANO") ?
+	              "Registro exitoso. Espera aprobación del presidente." :
+	              "Registro exitoso. Ya puedes iniciar sesión.");
+
+	      return "redirect:/login";
+	  }
+
 	    //usuario del barrio
 	    @GetMapping("/usuariosPresidente")
 	    @PreAuthorize("hasRole('PRESIDENTE')")

@@ -3,6 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
+
     <meta charset="UTF-8">
     <title>Alerta Vecinal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -125,31 +126,35 @@
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                z-index: 1100;
-            }
-            
-            .sidebar.collapsed {
-                transform: translateX(0);
-                width: var(--sidebar-collapsed-width);
-            }
-            
-            .main-content-container {
-                margin-left: 0;
-                width: 100%;
-            }
-            
-            .toggle-btn {
-                left: 10px;
-            }
-            
-            .sidebar.show-mobile {
-                transform: translateX(0);
-                width: var(--sidebar-width);
-            }
-        }
+		    .sidebar {
+		        transform: translateX(-100%);
+		        z-index: 1100;
+		        transition: transform var(--transition-speed); /* ✅ Línea agregada */
+		    }
+		
+		    .sidebar.collapsed {
+		        transform: translateX(0);
+		        width: var(--sidebar-collapsed-width);
+		    }
+		
+		    .main-content-container {
+		        margin-left: 0;
+		        width: 100%;
+		    }
+		
+		    .toggle-btn {
+		        left: 10px;
+		    }
+		
+		    .sidebar.show-mobile {
+		        transform: translateX(0);
+		        width: var(--sidebar-width);
+		    }
+		}
+
     </style>
+    <link rel="manifest" href="/manifest.json">
+		<meta name="theme-color" content="#343a40">
 </head>
 
 <body>
@@ -289,70 +294,86 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const sidebar = document.getElementById('sidebar');
-            const mainContentContainer = document.getElementById('mainContentContainer');
-            const toggleBtn = document.getElementById('sidebarToggle');
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.getElementById('sidebar');
+        const mainContentContainer = document.getElementById('mainContentContainer');
+        const toggleBtn = document.getElementById('sidebarToggle');
+        const overlay = document.getElementById('overlay');
 
-            function toggleSidebar() {
+        function toggleSidebar() {
+            const isMobile = window.innerWidth <= 768;
+
+            if (isMobile) {
+                sidebar.classList.toggle('show-mobile');
+                overlay.style.display = sidebar.classList.contains('show-mobile') ? 'block' : 'none';
+            } else {
                 sidebar.classList.toggle('collapsed');
                 mainContentContainer.classList.toggle('collapsed');
                 toggleBtn.classList.toggle('collapsed');
                 localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
             }
-
-            toggleBtn.addEventListener('click', toggleSidebar);
-
-            // Cargar estado colapsado desde localStorage
-            if (localStorage.getItem('sidebarCollapsed') === 'true') {
-                toggleSidebar();
-            }
-
-            // Manejo para móviles
-            if (window.innerWidth <= 768) {
-                sidebar.classList.add('collapsed');
-                mainContentContainer.classList.remove('collapsed');
-                toggleBtn.addEventListener('click', function() {
-                    sidebar.classList.toggle('show-mobile');
-                });
-            }
-        });
-    </script>
-    <script th:inline="javascript">
-    document.addEventListener("DOMContentLoaded", function () {
-        // Pedir permiso si aún no lo ha hecho
-        if (!("Notification" in window)) return;
-
-        if (Notification.permission !== "granted") {
-            Notification.requestPermission();
         }
 
-        let ultimaNotiId = null; // para evitar mostrar la misma varias veces
+        toggleBtn.addEventListener('click', toggleSidebar);
 
-        // Verificar cada 10 segundos si hay nueva notificación
-        setInterval(() => {
-            fetch("/alerta/ultimaNotificacion")
-                .then(res => res.json())
-                .then(data => {
-                    if (!data || !data.id) return;
+        // Solo aplica colapsado en escritorio si estaba guardado
+        if (window.innerWidth > 768 && localStorage.getItem('sidebarCollapsed') === 'true') {
+            sidebar.classList.add('collapsed');
+            mainContentContainer.classList.add('collapsed');
+            toggleBtn.classList.add('collapsed');
+        }
 
-                    if (ultimaNotiId !== data.id) {
-                        ultimaNotiId = data.id;
+        // Ocultar sidebar móvil al hacer clic fuera
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('show-mobile');
+            overlay.style.display = 'none';
+        });
+    });
+</script>
 
-                        // Mostrar notificación
-                        if (Notification.permission === "granted") {
+    <div sec:authorize="isAuthenticated()">
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            if (!("Notification" in window)) return;
+
+            if (Notification.permission !== "granted") {
+                Notification.requestPermission();
+            }
+
+            let ultimaNotiId = null;
+
+            setInterval(() => {
+                fetch("/alerta/ultimaNotificacion")
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data || !data.id) return;
+
+                        if (ultimaNotiId !== data.id) {
+                            ultimaNotiId = data.id;
+
                             new Notification("🔔 Alerta Vecinal", {
                                 body: data.mensaje || "Nueva alerta en tu barrio",
-                                //icon: "/img/icono.png" // cambia si tienes un ícono
+                                icon: "/img/icono-192.png" // si tienes uno
                             });
                         }
-                    }
-                })
-                .catch(err => {
-                    console.warn("Error al consultar notificaciones:", err);
-                });
-        }, 10000); // 10 segundos
-    });
+                    })
+                    .catch(err => {
+                        console.warn("Error al consultar notificaciones:", err);
+                    });
+            }, 10000); // 10 segundos
+        });
+    </script>
+</div>
+<div id="overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.3); z-index:1050;"></div>
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registrado', reg);
+            }).catch(function(err) {
+                console.warn('❌ Error al registrar Service Worker', err);
+            });
+    }
 </script>
 </body>
 </html>

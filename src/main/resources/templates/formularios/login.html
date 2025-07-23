@@ -117,7 +117,11 @@
                                     Sesión cerrada correctamente
                                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                                 </div>
-                                
+                                <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show">
+								    <i class="bi bi-info-circle-fill me-2"></i>
+								    <span th:text="${mensaje}"></span>
+								    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+								</div>
                                 <div class="d-grid gap-2 mb-3">
                                     <button type="submit" class="btn btn-login btn-lg text-white">
                                         <i class="bi bi-box-arrow-in-right me-2"></i> Ingresar
